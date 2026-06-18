@@ -78,12 +78,12 @@ function matchesPeriod(row: any, mission: any, period: { dateKey?: string; weekK
 }
 
 async function allMissions() {
-  const missions = isMongoEnabled() ? await Mission.find({ active: true }) : gamificationMemory.missions.filter((mission) => mission.active);
+  const missions = isMongoEnabled() ? await Mission.find({ active: true }).lean() : gamificationMemory.missions.filter((mission) => mission.active);
   return missions.map(serializeMission);
 }
 
 async function userMissionRows(userId: string) {
-  const rows = isMongoEnabled() ? await UserMission.find({ userId }) : gamificationMemory.userMissions.filter((row) => row.userId === userId);
+  const rows = isMongoEnabled() ? await UserMission.find({ userId }).lean() : gamificationMemory.userMissions.filter((row) => row.userId === userId);
   return rows.map(serializeUserMission);
 }
 
@@ -95,7 +95,7 @@ async function findMission(missionId: string) {
 
 async function findUserMission(userId: string, mission: any, period = periodFor(mission)) {
   const rows = isMongoEnabled()
-    ? await UserMission.find({ userId, missionId: mission.missionId })
+    ? await UserMission.find({ userId, missionId: mission.missionId }).lean()
     : gamificationMemory.userMissions.filter((row) => row.userId === userId && row.missionId === mission.missionId);
   return rows.map(serializeUserMission).find((row) => matchesPeriod(row, mission, period)) ?? null;
 }

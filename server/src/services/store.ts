@@ -286,7 +286,6 @@ function enrichQuestPayload(input: {
   userId: string;
   date: Date;
   calculated: ReturnType<typeof calculateDailyTotal>;
-  logsForSummary: any[];
   previousXp: number;
   trackingMode?: TrackingMode;
   moodSelected?: string;
@@ -459,7 +458,7 @@ export const store = {
 
   async userLogs(userId: string) {
     const logs = mongoEnabled
-      ? await CarbonLog.find({ userId }).sort({ createdAt: -1 })
+      ? await CarbonLog.find({ userId }).sort({ createdAt: -1 }).lean()
       : memory.logs.filter((log) => log.userId === userId).sort((a, b) => +b.createdAt - +a.createdAt);
     return logs.map(serializeLog);
   },
@@ -470,7 +469,7 @@ export const store = {
   },
 
   async userMissions(userId: string) {
-    const rows = mongoEnabled ? await UserMission.find({ userId }) : memory.userMissions.filter((mission) => mission.userId === userId);
+    const rows = mongoEnabled ? await UserMission.find({ userId }).lean() : memory.userMissions.filter((mission) => mission.userId === userId);
     return rows.map((row: any) => ({
       id: String(row._id ?? row.id),
       userId: String(row.userId),
@@ -579,7 +578,6 @@ export const store = {
       userId,
       date: normalizedDate,
       calculated,
-      logsForSummary: [...logsWithoutDate, basePayload],
       previousXp,
       trackingMode: meta.trackingMode,
       moodSelected: meta.moodSelected
@@ -611,21 +609,21 @@ export const store = {
 
   async dailyLogs(userId: string) {
     const logs = mongoEnabled
-      ? await DailyLog.find({ userId }).sort({ date: 1 })
+      ? await DailyLog.find({ userId }).sort({ date: 1 }).lean()
       : memory.dailyLogs.filter((log) => log.userId === userId).sort((a, b) => dateKey(a.date).localeCompare(dateKey(b.date)));
     return logs.map(serializeDailyLog);
   },
 
   async rawDailyLogs(userId: string) {
     return mongoEnabled
-      ? await DailyLog.find({ userId }).sort({ date: 1 })
+      ? await DailyLog.find({ userId }).sort({ date: 1 }).lean()
       : memory.dailyLogs.filter((log) => log.userId === userId).sort((a, b) => dateKey(a.date).localeCompare(dateKey(b.date)));
   },
 
   async dailyLogByDate(userId: string, date: string) {
     const normalizedDate = startOfDay(date);
     const log = mongoEnabled
-      ? await DailyLog.findOne({ userId, date: normalizedDate })
+      ? await DailyLog.findOne({ userId, date: normalizedDate }).lean()
       : memory.dailyLogs.find((item) => item.userId === userId && dateKey(item.date) === dateKey(normalizedDate));
     return log ? serializeDailyLog(log) : null;
   },

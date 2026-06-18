@@ -7,6 +7,29 @@ export type CategoryBudgets = {
   shoppingWaste: number;
 };
 
+type BudgetLog = {
+  totals?: {
+    transportCO2?: number;
+    electricityCO2?: number;
+    foodCO2?: number;
+    shoppingWasteCO2?: number;
+    netCO2?: number;
+    totalCO2?: number;
+  };
+  transport?: { co2?: number };
+  electricity?: { co2?: number };
+  food?: { co2?: number };
+  shoppingWaste?: { co2?: number };
+  detailedLog?: {
+    transport?: { co2?: number };
+    electricity?: { co2?: number };
+    food?: { co2?: number };
+    shoppingWaste?: { co2?: number };
+  };
+  netCO2?: number;
+  totalCO2?: number;
+};
+
 export function round1(value: number) {
   return Math.round(Number(value || 0) * 10) / 10;
 }
@@ -20,7 +43,7 @@ export function autoSplitBudget(monthlyBudget: number, proportions = defaultSpli
   };
 }
 
-export function categoryUsageFromLogs(logs: any[]) {
+export function categoryUsageFromLogs(logs: BudgetLog[]) {
   return logs.reduce<CategoryBudgets & { total: number }>(
     (totals, log) => ({
       transport: round1(totals.transport + Number(log.totals?.transportCO2 ?? log.transport?.co2 ?? log.detailedLog?.transport?.co2 ?? 0)),

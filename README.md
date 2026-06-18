@@ -253,6 +253,52 @@ VITE_API_BASE_URL=https://your-render-backend-url.onrender.com/api
 * Responsive design
 * Accessible labels and readable UI
 
+## Testing Checklist
+
+Run automated backend tests:
+
+```bash
+cd server
+npm test
+```
+
+Backend tests cover:
+
+- Carbon calculation, including no-travel, manual electricity units, smart quick estimates, no shopping, and packaged-food handling
+- Budget split, category usage summaries, over-budget status, and zero-usage empty states
+- Mission start/complete flows, reward claim safety, Eco Quest verification, and rejected proof paths
+- Electricity bill and payment validation, random document rejection, food payment rejection, and amount-based units estimation
+- Auth protection, including valid JWT verification and missing/invalid token rejection
+- Leaderboard public-field safety and mission proof guidance
+
+Manual:
+
+1. Signup, login, logout, and login persistence
+2. Onboarding: welcome, profile, calculator baseline, goal, budget, first Eco Quest
+3. Calculator: bill upload, payment screenshot, manual units, smart estimate
+4. Eco Quest: no travel, low/medium/high travel, no shopping, save, refresh
+5. Dashboard: empty state, baseline state, logged-data state
+6. Budget planner: suggested budget, save, refresh
+7. AI Coach: Gemini when configured, fallback when missing
+8. Missions: start, proof upload, rejected/needs-review/verified status, claim reward
+9. Shop purchase/equip and profile display
+10. Battles create/join/progress
+11. Leaderboard and profile privacy display
+12. Logout/login data persistence with MongoDB
+
+Deployment:
+
+1. Render backend build uses `npm install --include=dev && npm run build`
+2. Render backend start uses `npm start`
+3. `GET /` returns the API running response
+4. `HEAD /` returns 200
+5. `GET /api/health` returns healthy JSON
+6. Vercel frontend has `VITE_API_BASE_URL` set to the Render `/api` URL
+7. Render backend has `CLIENT_URL` set to the deployed Vercel URL
+8. Signup/login works against deployed MongoDB Atlas
+9. Calculator, Eco Quest, dashboard, missions, proof upload, shop, and battles work after deployment
+10. Logout/login keeps saved data from MongoDB
+
 ## Problem Statement Alignment
 
 CarbonTwin AI directly supports the problem statement by helping users:
@@ -295,4 +341,3 @@ Developed by Petrisha V
 ## License
 
 This project is created for educational and challenge submission purposes.
-

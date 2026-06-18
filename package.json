@@ -1,0 +1,19 @@
+{
+  "name": "carbontwin-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CarbonTwin AI full-stack personal climate intelligence platform.",
+  "scripts": {
+    "dev": "npm run server --workspace server & npm run dev --workspace client",
+    "server": "npm run server --workspace server",
+    "build": "npm run build --workspace client",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspace server",
+    "seed": "npm run seed --workspace server",
+    "install:all": "npm install"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}

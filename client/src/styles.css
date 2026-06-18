@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #071a12;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(6, 182, 212, 0.16), transparent 30%),
+    radial-gradient(circle at 80% 5%, rgba(34, 197, 94, 0.15), transparent 26%),
+    linear-gradient(135deg, #071a12 0%, #0b0f0e 50%, #071a12 100%);
+  color: #f8fafc;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+select {
+  background-color: #111c18;
+  color: #f8fafc;
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  border-radius: 12px;
+}
+
+select option {
+  background-color: #111c18;
+  color: #f8fafc;
+}
+
+select option:checked {
+  background-color: #22c55e;
+  color: #071a12;
+}
+
+select:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+.glass {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(8, 20, 15, 0.72);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-neon-green/70 focus:ring-offset-2 focus:ring-offset-carbon-950;
+}
+
+.field {
+  @apply w-full rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2.5 text-sm text-white outline-none transition focus:border-neon-green/80;
+}
+
+.label {
+  @apply text-xs font-semibold uppercase tracking-wide text-slate-400;
+}
+
+.landing-hero-scene {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(34, 197, 94, 0.28), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(6, 182, 212, 0.2), transparent 26%),
+    radial-gradient(circle at 70% 72%, rgba(34, 197, 94, 0.18), transparent 30%),
+    linear-gradient(135deg, #071a12 0%, #0b0f0e 52%, #06130f 100%);
+}
+
+.landing-grid {
+  background-image:
+    linear-gradient(rgba(34, 197, 94, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at 50% 35%, black, transparent 72%);
+}
+
+.landing-hero-scene::before {
+  content: "";
+  position: absolute;
+  inset: 8% 6% auto auto;
+  width: min(54vw, 720px);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 197, 94, 0.18);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.18), transparent 38%),
+    conic-gradient(from 120deg, rgba(34, 197, 94, 0.26), rgba(6, 182, 212, 0.18), transparent, rgba(34, 197, 94, 0.26));
+  filter: blur(0.2px);
+  opacity: 0.65;
+  animation: landing-orbit 28s linear infinite;
+}
+
+.landing-hero-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(115deg, transparent 0 28%, rgba(34, 197, 94, 0.08) 31%, transparent 36% 100%),
+    linear-gradient(72deg, transparent 0 56%, rgba(6, 182, 212, 0.07) 60%, transparent 64% 100%);
+  animation: landing-light-sweep 12s ease-in-out infinite alternate;
+}
+
+.landing-particle {
+  position: absolute;
+  z-index: 1;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 24px rgba(34, 197, 94, 0.85);
+  animation: landing-float 7s ease-in-out infinite;
+}
+
+.animation-delay-700 {
+  animation-delay: 700ms;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.landing-cta-sheen {
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.08) 42%, transparent 62%);
+  transform: translateX(-70%);
+  animation: landing-sheen 7s ease-in-out infinite;
+}
+
+.landing-slow-spin {
+  animation: landing-orbit 34s linear infinite;
+}
+
+.landing-reverse-spin {
+  animation: landing-reverse-orbit 42s linear infinite;
+}
+
+@keyframes landing-orbit {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes landing-reverse-orbit {
+  from {
+    transform: rotate(360deg) scale(1);
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes landing-light-sweep {
+  from {
+    transform: translateX(-3%);
+    opacity: 0.45;
+  }
+  to {
+    transform: translateX(3%);
+    opacity: 0.85;
+  }
+}
+
+@keyframes landing-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(18px, -28px, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes landing-sheen {
+  0%, 45% {
+    transform: translateX(-80%);
+  }
+  100% {
+    transform: translateX(90%);
+  }
+}

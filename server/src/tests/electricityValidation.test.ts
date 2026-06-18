@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateElectricityBill } from "../services/electricityBillValidationService.js";
-import { extractPaymentDetails } from "../services/electricityPaymentExtractionService.js";
+import { extractPaymentAmount, extractPaymentDetails } from "../services/electricityPaymentExtractionService.js";
 import { validateElectricityPaymentProof } from "../services/electricityPaymentValidationService.js";
 
 test("valid electricity bill text is accepted", () => {
@@ -32,6 +32,18 @@ test("food payment is rejected as electricity payment proof", () => {
   const result = validateElectricityPaymentProof("Payment successful Amount Paid Rs. 420 Swiggy food order UPI transaction");
 
   assert.equal(result.isValid, false);
+});
+
+test("random non-electricity UPI payment is rejected", () => {
+  const result = validateElectricityPaymentProof("UPI payment successful Amount Paid INR 999 Transaction ID UPI123456 paid to Book Store");
+
+  assert.equal(result.isValid, false);
+});
+
+test("amount extraction supports rupee, Rs, and INR patterns", () => {
+  assert.equal(extractPaymentAmount("Amount Paid ₹840.50"), 840.5);
+  assert.equal(extractPaymentAmount("Paid Rs. 700"), 700);
+  assert.equal(extractPaymentAmount("Debited INR 1,250.75"), 1250.75);
 });
 
 test("amount-based electricity payment estimates units and personal CO2", () => {

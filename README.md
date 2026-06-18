@@ -253,7 +253,7 @@ VITE_API_BASE_URL=https://your-render-backend-url.onrender.com/api
 * Responsive design
 * Accessible labels and readable UI
 
-## Testing Checklist
+## Testing
 
 Run automated backend tests:
 

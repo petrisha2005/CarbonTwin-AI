@@ -27,6 +27,16 @@ test("mission service starts a mission once for the active period", async () => 
   assert.equal(second.id, first.id);
 });
 
+test("mission progress updates without immediately claiming rewards", async () => {
+  const user = await testUser("progress");
+  const result = await missionService.progress(user.id, "switch-off-unused-appliances", 1, "unit-progress");
+
+  assert.equal(result.userMission.status, "completed");
+  assert.equal(result.userMission.progress, 1);
+  assert.equal(result.rewards, null);
+  assert.equal(result.userMission.rewardStatus, "not_claimed");
+});
+
 test("mission completion supports reward claim and prevents duplicate rewards", async () => {
   const user = await testUser("claim");
   const completed = await missionService.complete(user.id, "switch-off-unused-appliances");
@@ -37,6 +47,16 @@ test("mission completion supports reward claim and prevents duplicate rewards", 
   assert.deepEqual(claimed.rewards, { xp: 20, leafCoins: 10, co2Saved: 0.8 });
   assert.equal(duplicate.rewards, null);
   assert.equal(duplicate.userMission.rewardStatus, "full_claimed");
+});
+
+test("recommended missions do not auto-start user mission rows", async () => {
+  const user = await testUser("recommended");
+  const recommended = await missionService.recommended(user.id);
+  const mine = await missionService.my(user.id);
+
+  assert.ok(recommended.length > 0);
+  assert.deepEqual(mine.active, []);
+  assert.deepEqual(mine.completed, []);
 });
 
 test("Eco Quest data can verify and complete a matching mission", async () => {
@@ -56,6 +76,25 @@ test("Eco Quest data can verify and complete a matching mission", async () => {
   assert.equal(status.userMission.status, "completed");
   assert.equal(status.verificationStatus, "verified");
   assert.ok(status.trustScore >= 70);
+});
+
+test("Eco Quest verifies no shopping and no food delivery missions", async () => {
+  const user = await testUser("ecoquest-no-shopping");
+  const { log } = await store.upsertDailyLog(user.id, {
+    date: new Date().toISOString().slice(0, 10),
+    transport: { mode: "walking", distanceKm: 0, numberOfTrips: 0 },
+    electricity: { electricityKwhToday: 2, acHours: 0, fanHours: 2 },
+    food: { dietToday: "vegetarian", foodDeliveryToday: false, packagedFoodToday: false },
+    shoppingWaste: { onlineOrderToday: false, clothingPurchaseToday: false, plasticUsage: "low", recycledToday: false },
+    ecoActionIds: []
+  });
+
+  await missionService.handleEcoQuest(user.id, log);
+  const noShopping = await missionService.verificationStatus(user.id, "no-online-shopping-today");
+  const noDelivery = await missionService.verificationStatus(user.id, "avoid-food-delivery");
+
+  assert.equal(noShopping.verificationStatus, "verified");
+  assert.equal(noDelivery.verificationStatus, "verified");
 });
 
 test("wrong proof method is rejected for missions requiring verified Eco Quest proof", async () => {

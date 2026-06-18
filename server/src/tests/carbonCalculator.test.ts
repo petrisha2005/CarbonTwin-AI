@@ -40,6 +40,31 @@ test("manual electricity units use the India grid emission factor", () => {
   assert.equal(baseline.electricityCO2, 82);
 });
 
+test("public transport produces lower CO2 than petrol car for same distance", () => {
+  const sharedInputs = {
+    dailyDistanceKm: 12,
+    weeklyTravelDays: 5,
+    monthlyElectricityKwh: 0,
+    acHoursPerDay: 0,
+    fanHoursPerDay: 0,
+    applianceUsageLevel: undefined,
+    dietType: "vegetarian" as const,
+    foodDeliveryPerWeek: 0,
+    packagedFoodLevel: "low" as const,
+    onlineOrdersPerMonth: 0,
+    clothingPurchasesPerMonth: 0,
+    plasticUsageLevel: "low" as const,
+    recyclingHabit: "often" as const
+  };
+
+  const bus = calculateCarbon({ ...sharedInputs, transportMode: "bus" });
+  const metro = calculateCarbon({ ...sharedInputs, transportMode: "metro" });
+  const car = calculateCarbon({ ...sharedInputs, transportMode: "car_petrol" });
+
+  assert.ok(bus.transportCO2 < car.transportCO2);
+  assert.ok(metro.transportCO2 < car.transportCO2);
+});
+
 test("smart quick estimate converts levels into a detailed daily footprint", () => {
   const detailed = quickLogToDetailed({
     date: "2026-06-18",
@@ -55,6 +80,19 @@ test("smart quick estimate converts levels into a detailed daily footprint", () 
   assert.equal(result.transportCO2, 1.3);
   assert.equal(result.electricityCO2, 5.5);
   assert.equal(result.co2Saved, 0.8);
+});
+
+test("smart electricity estimate returns positive value when energy values are provided", () => {
+  const detailed = quickLogToDetailed({
+    date: "2026-06-18",
+    travelLevel: "no_travel",
+    energyLevel: "high",
+    foodChoice: "vegan",
+    shoppingToday: "none",
+    ecoActionDone: false
+  });
+
+  assert.ok(calculateDailyTotal(detailed).electricityCO2 > 0);
 });
 
 test("no shopping creates zero quick shopping emissions", () => {

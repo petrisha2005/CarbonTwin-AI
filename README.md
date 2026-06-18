@@ -1,114 +1,211 @@
-# CarbonTwin AI
+# CarbonTwin AI – Personal Climate Intelligence Twin
 
-CarbonTwin AI helps individuals understand, track, and reduce their carbon footprint through simple daily actions and personalized climate insights.
+CarbonTwin AI is a climate intelligence web application that helps individuals understand, track, and reduce their carbon footprint through simple daily actions and personalized insights.
+
+The platform combines carbon footprint calculation, daily habit tracking, AI-powered suggestions, budget planning, missions, rewards, and progress visualization to make sustainability practical and engaging for everyday users.
+
+## Live Demo
+
+https://carbon-twin-ai-client.vercel.app
 
 ## Problem Statement
 
-People often want to reduce their climate impact, but carbon data can feel technical, guilt-heavy, and hard to act on. CarbonTwin AI turns everyday lifestyle choices into readable footprint estimates, daily tracking, budgets, missions, and AI-supported suggestions.
+Design a solution that helps individuals understand, track, and reduce their carbon footprint through simple actions and personalized insights.
 
 ## Solution Overview
 
-CarbonTwin AI is a full-stack personal climate intelligence app. Users create a baseline footprint, track daily actions through Eco Quest, review dashboards and budgets, receive AI Coach recommendations, complete missions, and grow a CarbonTwin avatar as their habits improve.
+CarbonTwin AI acts as a personal climate companion. It helps users calculate their baseline carbon footprint, track daily lifestyle choices, receive AI-powered suggestions, complete eco missions, and monitor progress over time.
+
+The application focuses on four major lifestyle categories:
+
+* Transport
+* Electricity
+* Food
+* Shopping & Waste
+
+Users can track their impact, set carbon goals, follow a monthly carbon budget, and receive personalized recommendations to reduce their footprint step by step.
 
 ## Key Features
 
-- Baseline carbon footprint calculator with bill upload, payment screenshot estimation, manual units, and smart estimate flows
-- Daily Eco Quest quick and detailed logging with no-travel and no-shopping options
-- Dashboard analytics with category breakdowns, empty states, progress, and carbon equivalents
-- AI Eco Coach with Gemini support and rule-based fallback grounded in stored user data
-- Carbon budget planner with baseline-aware suggestions
-- Missions, proof validation, rewards, badges, and inline proof status UX
-- CarbonTwin avatar/world, leaderboard, battles, profile, and goal setting
-- JWT auth, protected routes, onboarding-aware redirects, and MongoDB persistence
+### Baseline Carbon Footprint Calculator
+
+Users can calculate their carbon footprint based on transport, electricity, food, and shopping/waste habits.
+
+### Electricity Bill & Payment Screenshot Support
+
+Users can upload an electricity bill or payment screenshot. The system extracts useful information and estimates electricity-related carbon emissions.
+
+### Daily Eco Quest
+
+A quick daily tracking system where users log simple lifestyle actions and build sustainable habits.
+
+### AI Eco Coach
+
+Provides personalized climate-friendly suggestions based on user data, goals, mood, budget, and difficulty preference.
+
+### Carbon Dashboard
+
+Displays carbon insights, category-wise usage, progress trends, saved CO₂, streaks, and monthly tracking.
+
+### Carbon Budget Planner
+
+Allows users to set a monthly carbon budget and track category-wise budget usage.
+
+### Missions & Rewards
+
+Users can complete eco missions, upload proof, verify actions, earn XP, LeafCoins, and unlock badges.
+
+### CarbonTwin Avatar & World
+
+A gamified progress system where the user’s CarbonTwin evolves based on sustainable actions and progress.
+
+### Leaderboard & Battles
+
+Users can participate in friendly challenges and compare impact with others.
+
+### Persistent User Accounts
+
+All user progress, logs, rewards, goals, missions, and preferences are stored securely and restored after login.
 
 ## Tech Stack
 
-- Frontend: React, TypeScript, Vite, Tailwind CSS, Framer Motion, Recharts, Lucide React
-- Backend: Node.js, Express, TypeScript, Mongoose, Zod, JWT, bcrypt
-- Database: MongoDB, with development-only in-memory fallback
-- AI/OCR: Google Gemini optional, Tesseract.js/PDF text extraction for supported uploads
+### Frontend
 
-## Architecture
+* React.js
+* TypeScript
+* Vite
+* Tailwind CSS
+* Framer Motion
+* Recharts
+
+### Backend
+
+* Node.js
+* Express.js
+* TypeScript
+* MongoDB
+* Mongoose
+* JWT Authentication
+
+### AI & OCR
+
+* Gemini API
+* Tesseract.js
+* PDF parsing
+
+### Deployment
+
+* Frontend: Vercel
+* Backend: Render
+* Database: MongoDB Atlas
+
+## System Architecture
+
+CarbonTwin AI follows a full-stack MERN-style architecture.
+
+Frontend users interact with the React application deployed on Vercel. The frontend communicates with the Express backend through REST APIs. The backend handles authentication, carbon calculations, mission logic, AI suggestions, file validation, and database operations. MongoDB Atlas stores user profiles, logs, missions, rewards, budgets, and progress data.
+
+## Folder Structure
 
 ```text
-client/
-  src/components/    Shared UI and feature components
-  src/context/       Auth context
-  src/lib/           API, types, shared frontend utilities
-  src/pages/         Route-level screens
-  src/services/      Frontend API clients
-  src/styles.css     Global styles
-
-server/
-  src/config/        Environment and database setup
-  src/controllers/   Controller-level request handlers where used
-  src/middleware/    Auth middleware
-  src/models/        Mongoose models and indexes
-  src/routes/        API route groups
-  src/services/      Business logic, validation, AI/OCR, persistence helpers
-  src/tests/         Node test runner coverage for key utilities
-  src/utils/         Carbon math, budget math, scoring, dates
+CarbonTwin-AI/
+├── client/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── server/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── utils/
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── README.md
+└── .gitignore
 ```
 
-## Setup
+## Installation and Setup
+
+### 1. Clone the Repository
 
 ```bash
+git clone https://github.com/your-username/CarbonTwin-AI.git
+cd CarbonTwin-AI
+```
+
+### 2. Setup Backend
+
+```bash
+cd server
 npm install
-cp server/.env.example server/.env
-cp client/.env.example client/.env
 ```
 
-For real persistence, set `MONGODB_URI`. If it is omitted in development, the server uses in-memory data and prints a warning.
+Create a `.env` file inside the `server` folder:
 
-## Environment Variables
-
-Server (`server/.env`):
-
-```bash
+```env
+PORT=10000
 NODE_ENV=development
-PORT=4000
-CLIENT_URL=http://localhost:5174
-MONGODB_URI=mongodb+srv://username:password@cluster.example.mongodb.net/carbontwin
-JWT_SECRET=replace-with-a-long-random-secret
-GEMINI_API_KEY=
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_long_random_secret
+CLIENT_URL=http://localhost:5173
+GEMINI_API_KEY=your_gemini_api_key_optional
 ```
 
-Client (`client/.env`):
-
-```bash
-VITE_API_BASE_URL=http://localhost:4000/api
-```
-
-`JWT_SECRET` is required in production. `GEMINI_API_KEY` is optional; without it, AI Coach uses deterministic fallback recommendations from user data.
-
-## How To Run
-
-Frontend and backend together:
+Run backend:
 
 ```bash
 npm run dev
 ```
 
-Separately:
+Build backend:
 
 ```bash
-npm run server
-npm run dev --workspace client -- --host 127.0.0.1 --port 5174
+npm run build
+npm start
 ```
 
-Production build checks:
+### 3. Setup Frontend
 
 ```bash
-npm run typecheck
-npm run test
-npm run build
-npm run build --workspace server
-npm start --workspace server
+cd client
+npm install
+```
+
+Create a `.env` file inside the `client` folder:
+
+```env
+VITE_API_BASE_URL=http://localhost:10000/api
+```
+
+Run frontend:
+
+```bash
+npm run dev
 ```
 
 ## Deployment
 
-Backend on Render:
+### Backend Deployment
+
+The backend is deployed on Render.
+
+Required environment variables:
+
+```env
+NODE_ENV=production
+PORT=10000
+MONGODB_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_long_random_secret
+CLIENT_URL=https://your-vercel-frontend-url.vercel.app
+GEMINI_API_KEY=your_gemini_api_key_optional
+```
+
+Render settings:
 
 ```text
 Root Directory: server
@@ -116,119 +213,86 @@ Build Command: npm install --include=dev && npm run build
 Start Command: npm start
 ```
 
-Render environment variables:
+### Frontend Deployment
 
-```bash
-NODE_ENV=production
-PORT=10000
-CLIENT_URL=https://your-vercel-frontend-url.vercel.app
-MONGODB_URI=mongodb+srv://username:password@cluster.example.mongodb.net/carbontwin
-JWT_SECRET=replace-with-a-long-random-secret
-GEMINI_API_KEY=
-```
+The frontend is deployed on Vercel.
 
-The backend build uses TypeScript, so Render must install dev dependencies during the build step. The `--include=dev` flag ensures packages such as `@types/cors`, `@types/morgan`, `@types/jsonwebtoken`, and `@types/bcryptjs` are available before `npm run build`.
-
-Frontend on Vercel:
+Vercel settings:
 
 ```text
 Root Directory: client
 Build Command: npm run build
 Output Directory: dist
+Install Command: npm install
 ```
 
-Vercel environment variable:
+Frontend environment variable:
 
-```bash
+```env
 VITE_API_BASE_URL=https://your-render-backend-url.onrender.com/api
 ```
 
-Useful local URLs:
+## Security Features
 
-- Frontend: `http://127.0.0.1:5174`
-- Backend API: `http://localhost:4000/api`
-- Health check: `http://localhost:4000/api/health`
+* JWT-based authentication
+* Password hashing using bcrypt
+* Protected API routes
+* User-specific data access through userId
+* Environment variables for secrets
+* File type and size validation
+* Proof and bill upload validation
+* No sensitive keys exposed in frontend
 
-## Testing Checklist
+## Accessibility and UX
 
-Automated:
+* Guided onboarding flow
+* Clear question-based input forms
+* No default pre-selected lifestyle choices
+* Friendly validation messages
+* Loading, empty, and error states
+* Responsive design
+* Accessible labels and readable UI
 
-- Carbon calculator utility estimates category totals
-- Budget split and usage summaries
-- Electricity payment screenshot extraction rules
-- Mission proof expected-proof guidance
-- Public leaderboard scoring output
+## Problem Statement Alignment
 
-Manual:
+CarbonTwin AI directly supports the problem statement by helping users:
 
-1. Signup, login, logout, and login persistence
-2. Onboarding: welcome, profile, calculator baseline, goal, budget, first Eco Quest
-3. Calculator: bill upload, payment screenshot, manual units, smart estimate
-4. Eco Quest: no travel, low/medium/high travel, no shopping, save, refresh
-5. Dashboard: empty state, baseline state, logged-data state
-6. Budget planner: suggested budget, save, refresh
-7. AI Coach: Gemini when configured, fallback when missing
-8. Missions: start, proof upload, rejected/needs-review/verified status, claim reward
-9. Shop purchase/equip and profile display
-10. Battles create/join/progress
-11. Leaderboard and profile privacy display
-12. Logout/login data persistence with MongoDB
+### Understand
 
-## Security Notes
+* Baseline carbon footprint calculator
+* Dashboard insights
+* Category-wise breakdown
+* Carbon budget usage
 
-- Passwords are hashed with bcrypt.
-- JWT signing uses `JWT_SECRET`; production startup fails if it is missing.
-- User-specific APIs use auth middleware and `req.user.id`.
-- Public responses use sanitized user objects and do not expose `passwordHash`.
-- CORS uses `CLIENT_URL`; local dev origins are allowed only outside production.
-- Uploads validate file type and size.
-- Bill/payment uploads are temporary and deleted after validation.
-- Mission proof uploads are validated from temp files; only metadata and extracted validation snippets are stored.
-- Do not commit `.env`, API keys, MongoDB URIs, JWT secrets, `uploads/`, `dist/`, or `node_modules/`.
+### Track
 
-## Accessibility Notes
+* Daily Eco Quest
+* Monthly progress
+* Missions and badges
+* User history and streaks
 
-- Core form inputs and selects use visible labels.
-- Option cards are keyboard-accessible buttons with focus states and pressed state.
-- Icon-only layout buttons include accessible labels where used.
-- Error messages are visible text, not color-only indicators.
-- Mission proof validation status appears inline near the mission action.
-- Landing page, dashboard, calculator, Eco Quest, budget, and missions use headings and helper text for option groups.
+### Reduce
 
-## Problem Alignment
-
-- Understand: baseline calculator, dashboard category breakdowns, carbon equivalents, and profile goals.
-- Track: Eco Quest, daily history, budget planner, streaks, missions, and progress.
-- Reduce: AI Coach, missions, budget suggestions, goals, and actionable no-guilt recommendations.
-- Simple actions: quick logs, no-travel/no-shopping choices, guided calculator flows, and mission cards.
-- Personalized insights: dashboard and coach outputs are based on each user’s saved baseline, logs, goals, and mission state.
-
-Gamification exists to support behavior change and carbon reduction; user-specific stats stay inside authenticated pages.
-
-## Repository Size Notes
-
-The repository is configured to exclude generated and large local artifacts:
-
-- `node_modules/`
-- `dist/` and `build/`
-- `.env*`
-- `uploads/`
-- temp/cache/coverage/log files
-- local OCR `*.traineddata`
-
-Before submission:
-
-```bash
-git status --short
-find . -maxdepth 3 -type f -size +1M -not -path './node_modules/*' -not -path './.git/*'
-```
-
-Only source, config examples, lockfiles, and documentation should be committed.
+* AI Eco Coach
+* Personalized goals
+* Eco missions
+* Budget suggestions
+* Practical lifestyle actions
 
 ## Future Improvements
 
-- Add broader integration tests for authenticated workflows.
-- Add rate limiting for auth and upload endpoints before public deployment.
-- Add object storage with signed URLs if long-term proof file retention is required.
-- Add code splitting for the largest frontend chunks.
-- Add deeper accessibility testing with automated tooling.
+* Real-time electricity provider integrations
+* More advanced AI vision-based proof validation
+* Mobile app version
+* Community challenges
+* More detailed carbon factor datasets
+* Regional carbon emission customization
+
+## Author
+
+Developed by Petrisha V
+
+## License
+
+This project is created for educational and challenge submission purposes.
+

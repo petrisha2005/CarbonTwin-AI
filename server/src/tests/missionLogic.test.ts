@@ -6,6 +6,8 @@ import { missionService } from "../services/missionService.js";
 import { validateMissionProof } from "../services/missionProofValidationService.js";
 import { setMongoEnabled, store } from "../services/store.js";
 
+const testPassword = "ValidTestPassphrase123!";
+
 async function testUser(label: string) {
   setMongoEnabled(false);
   await seedGamification();
@@ -14,7 +16,7 @@ async function testUser(label: string) {
   return store.createUser({
     name: `Mission ${label}`,
     email: `mission-${label}-${Date.now()}@example.com`,
-    password: "secret123"
+    password: testPassword
   });
 }
 

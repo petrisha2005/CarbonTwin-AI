@@ -1,6 +1,7 @@
-import cors, { type CorsOptions } from "cors";
+import cors from "cors";
 import express from "express";
 import morgan from "morgan";
+import { createCorsOptions } from "./config/cors.js";
 import { connectDatabase } from "./config/db.js";
 import { env } from "./config/env.js";
 import { authRouter } from "./routes/auth.js";
@@ -27,15 +28,7 @@ import { seedGamification } from "./services/seedGamificationService.js";
 import { shopService } from "./services/shopService.js";
 
 const app = express();
-const developmentOrigins = env.nodeEnv === "production" ? [] : ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"];
-const allowedOrigins = new Set([env.clientOrigin, ...developmentOrigins]);
-const corsOptions: CorsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin || allowedOrigins.has(origin)) return callback(null, true);
-    return callback(new Error(`CORS blocked origin: ${origin}`));
-  },
-  credentials: true
-};
+const corsOptions = createCorsOptions(env.clientOrigin, env.nodeEnv);
 
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -93,6 +86,9 @@ app.use("/api/world", worldRouter);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);
+  if (err.message === "CORS origin not allowed") {
+    return res.status(403).json({ message: "Origin not allowed" });
+  }
   res.status(500).json({ message: "Something went wrong" });
 });
 

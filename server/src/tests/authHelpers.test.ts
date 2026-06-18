@@ -6,6 +6,8 @@ import { env } from "../config/env.js";
 import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import { setMongoEnabled, store } from "../services/store.js";
 
+const testPassword = "ValidTestPassphrase123!";
+
 function mockResponse() {
   const response = {
     statusCode: 200,
@@ -27,7 +29,7 @@ test("JWT signed with app secret authenticates protected requests", async () => 
   const user = await store.createUser({
     name: "Auth User",
     email: `auth-${Date.now()}@example.com`,
-    password: "secret123"
+    password: testPassword
   });
   const token = jwt.sign({ id: user.id }, env.jwtSecret, { expiresIn: "7d" });
   const req = { headers: { authorization: `Bearer ${token}` } } as AuthedRequest;
@@ -64,12 +66,12 @@ test("saved daily logs are isolated by userId and duplicate dates update instead
   const firstUser = await store.createUser({
     name: "Persistence One",
     email: `persist-one-${Date.now()}@example.com`,
-    password: "secret123"
+    password: testPassword
   });
   const secondUser = await store.createUser({
     name: "Persistence Two",
     email: `persist-two-${Date.now()}@example.com`,
-    password: "secret123"
+    password: testPassword
   });
   const dailyInput = {
     date: "2026-06-18",

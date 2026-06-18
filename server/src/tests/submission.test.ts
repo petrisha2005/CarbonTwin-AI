@@ -66,7 +66,7 @@ test("mission proof guidance is mission-specific", () => {
 test("leaderboard scoring exposes only public user fields", () => {
   const score = periodScore({ co2Saved: 5, logsCount: 3, xpEarned: 20, period: "weekly" });
   assert.equal(score, 120);
-  const publicUser = publicLeaderboardUser({ id: "u1", name: "Patricia Example", passwordHash: "secret", xp: 10, level: 2 }, 1);
+  const publicUser = publicLeaderboardUser({ id: "u1", name: "Patricia Example", passwordHash: "hashed-value", xp: 10, level: 2 }, 1);
   assert.equal(publicUser.displayName, "Patricia");
   assert.equal(Object.hasOwn(publicUser, "passwordHash"), false);
 });

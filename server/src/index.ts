@@ -49,7 +49,28 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 if (env.nodeEnv !== "test") app.use(morgan("dev"));
 
-app.get("/api/health", (_req, res) => res.json({ ok: true, service: "CarbonTwin AI" }));
+app.get("/", (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "CarbonTwin AI API is running",
+    apiBase: "/api",
+    health: "/api/health"
+  });
+});
+
+app.head("/", (_req, res) => {
+  res.sendStatus(200);
+});
+
+app.get("/api/health", (_req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "healthy",
+    service: "CarbonTwin AI API",
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/badges", badgesRouter);
 app.use("/api/battles", battlesRouter);

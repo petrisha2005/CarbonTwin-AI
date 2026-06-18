@@ -36,8 +36,8 @@ authRouter.post("/signup", async (req, res) => {
     const input = signupSchema.parse(req.body);
     const user = await store.createUser(input);
     res.status(201).json(authPayload(user, tokenFor(user.id)));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Signup failed" });
+  } catch {
+    res.status(400).json({ message: "Invalid signup input." });
   }
 });
 

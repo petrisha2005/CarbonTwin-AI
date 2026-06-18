@@ -33,9 +33,6 @@ async function textFromFile(file: Express.Multer.File) {
     if (pdf.failed) return { failed: true, code: "OCR_FAILED", message: pdf.message };
     return { text: pdf.text, confidence: pdf.confidence };
   }
-  if (file.mimetype === "text/plain") {
-    return { text: await import("node:fs/promises").then((fs) => fs.readFile(file.path, "utf8")), confidence: 0.9 };
-  }
   return extractTextFromImage(file.path);
 }
 
@@ -46,7 +43,7 @@ electricityRouter.post("/extract-bill", (req: AuthedRequest, res) => {
       if (error) {
         const message = error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE"
           ? "Bill file is too large. Please upload a file under 5MB."
-          : error.message || "Only electricity bill images or PDFs are supported.";
+          : "Only electricity bill images or PDFs are supported.";
         return res.status(400).json({ success: false, code: "INVALID_FILE", message });
       }
       if (!file) {

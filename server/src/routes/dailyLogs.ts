@@ -41,7 +41,6 @@ const dailyLogSchema = z.object({
 
 function validationMessage(error: unknown) {
   if (error instanceof z.ZodError) return error.errors.map((item) => item.message).join(". ");
-  if (error instanceof Error) return error.message;
   return "Daily log request failed";
 }
 

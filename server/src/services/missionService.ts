@@ -9,6 +9,7 @@ import { battleProgressService } from "./battleProgressService.js";
 import { gamificationMemory } from "./gamificationState.js";
 import { missionVerificationService } from "./missionVerificationService.js";
 import { isMongoEnabled, store } from "./store.js";
+import { sanitizeProofForResponse } from "../utils/proofSecurity.js";
 
 function serializeMission(mission: any) {
   return {
@@ -49,7 +50,7 @@ function serializeUserMission(row: any) {
     rewardsClaimed: row.rewardsClaimed ?? false,
     verificationStatus: row.verificationStatus ?? "not_required",
     trustScore: row.trustScore ?? 0,
-    proofs: row.proofs ?? [],
+    proofs: (row.proofs ?? []).map(sanitizeProofForResponse),
     verifiedAt: row.verifiedAt,
     rejectedAt: row.rejectedAt,
     verificationMessage: row.verificationMessage,

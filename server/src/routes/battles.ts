@@ -23,8 +23,8 @@ const createSchema = z.object({
 battlesRouter.post("/create", async (req: AuthedRequest, res) => {
   try {
     res.status(201).json(await battleService.create(req.user!.id, createSchema.parse(req.body ?? {})));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not create battle." });
+  } catch {
+    res.status(400).json({ message: "Could not create battle." });
   }
 });
 
@@ -32,71 +32,71 @@ battlesRouter.post("/join", async (req: AuthedRequest, res) => {
   try {
     const { battleCode } = z.object({ battleCode: z.string().min(1, "Battle code is required.") }).parse(req.body ?? {});
     res.json(await battleService.join(req.user!.id, battleCode));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not join battle." });
+  } catch {
+    res.status(400).json({ message: "Could not join battle." });
   }
 });
 
 battlesRouter.get("/my", async (req: AuthedRequest, res) => {
   try {
     res.json(await battleService.my(req.user!.id));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not load battles." });
+  } catch {
+    res.status(400).json({ message: "Could not load battles." });
   }
 });
 
 battlesRouter.get("/code/:battleCode", async (req: AuthedRequest, res) => {
   try {
     res.json({ battle: await battleService.get(String(req.params.battleCode), req.user!.id) });
-  } catch (error: any) {
-    res.status(404).json({ message: error.message ?? "Battle not found." });
+  } catch {
+    res.status(404).json({ message: "Battle not found." });
   }
 });
 
 battlesRouter.get("/:battleId/leaderboard", async (req: AuthedRequest, res) => {
   try {
     res.json(await battleService.leaderboard(String(req.params.battleId), req.user!.id));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not load leaderboard." });
+  } catch {
+    res.status(400).json({ message: "Could not load leaderboard." });
   }
 });
 
 battlesRouter.get("/:battleId/activity", async (req: AuthedRequest, res) => {
   try {
     res.json(await battleService.activity(String(req.params.battleId), req.user!.id));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not load activity." });
+  } catch {
+    res.status(400).json({ message: "Could not load activity." });
   }
 });
 
 battlesRouter.post("/:battleId/leave", async (req: AuthedRequest, res) => {
   try {
     res.json(await battleService.leave(req.user!.id, String(req.params.battleId)));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not leave battle." });
+  } catch {
+    res.status(400).json({ message: "Could not leave battle." });
   }
 });
 
 battlesRouter.post("/:battleId/cancel", async (req: AuthedRequest, res) => {
   try {
     res.json(await battleService.cancel(req.user!.id, String(req.params.battleId)));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not cancel battle." });
+  } catch {
+    res.status(400).json({ message: "Could not cancel battle." });
   }
 });
 
 battlesRouter.post("/:battleId/finalize", async (req: AuthedRequest, res) => {
   try {
     res.json(await battleService.finalize(String(req.params.battleId), req.user!.id));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not finalize battle." });
+  } catch {
+    res.status(400).json({ message: "Could not finalize battle." });
   }
 });
 
 battlesRouter.get("/:battleId", async (req: AuthedRequest, res) => {
   try {
     res.json({ battle: await battleService.get(String(req.params.battleId), req.user!.id) });
-  } catch (error: any) {
-    res.status(404).json({ message: error.message ?? "Battle not found." });
+  } catch {
+    res.status(404).json({ message: "Battle not found." });
   }
 });

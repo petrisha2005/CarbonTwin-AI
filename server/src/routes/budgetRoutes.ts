@@ -16,16 +16,16 @@ budgetRoutes.get("/current", async (req, res, next) => {
 budgetRoutes.post("/save", async (req, res) => {
   try {
     await budgetController.save(req, res);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not save budget." });
+  } catch {
+    res.status(400).json({ message: "Could not save budget." });
   }
 });
 
 budgetRoutes.put("/category-split", async (req, res) => {
   try {
     await budgetController.categorySplit(req, res);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not save category split." });
+  } catch {
+    res.status(400).json({ message: "Could not save category split." });
   }
 });
 

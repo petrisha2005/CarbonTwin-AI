@@ -6,6 +6,7 @@ import { validateElectricityBill } from "../services/electricityBillValidationSe
 import { validateElectricityPaymentProof } from "../services/electricityPaymentValidationService.js";
 import { setMongoEnabled, store } from "../services/store.js";
 import { publicLeaderboardUser } from "../utils/leaderboardScore.js";
+import { sanitizeProofForResponse } from "../utils/proofSecurity.js";
 
 const testPassword = "ValidTestPassphrase123!";
 
@@ -59,6 +60,19 @@ test("public user responses do not expose passwordHash", async () => {
 
   assert.equal(Object.hasOwn(user, "passwordHash"), false);
   assert.equal(Object.hasOwn(publicLeaderboardUser({ ...user, passwordHash: "hashed-value" }, 1), "passwordHash"), false);
+});
+
+test("mission proof response exposes only a short OCR preview", () => {
+  const safeProof = sanitizeProofForResponse({
+    proofMethod: "photo_proof",
+    extractedText: "Full OCR text with private account data that should not be returned.",
+    extractedTextPreview: "Short safe preview",
+    validationStatus: "needs_review"
+  });
+
+  assert.equal(Object.hasOwn(safeProof, "extractedText"), false);
+  assert.equal(safeProof.extractedTextPreview, "Short safe preview");
+  assert.ok(safeProof.extractedTextPreview.length <= 500);
 });
 
 test("invalid upload text is rejected before extraction is trusted", () => {

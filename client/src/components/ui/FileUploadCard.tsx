@@ -5,7 +5,7 @@ export function FileUploadCard({
   onFile,
   title = "Drop or choose an electricity bill image",
   helper = "JPG, PNG, WEBP, PDF, or a clear bill screenshot.",
-  accept = "image/png,image/jpeg,image/webp,application/pdf,text/plain"
+  accept = "image/png,image/jpeg,image/webp,application/pdf"
 }: {
   file: File | null;
   onFile: (file: File | null) => void;

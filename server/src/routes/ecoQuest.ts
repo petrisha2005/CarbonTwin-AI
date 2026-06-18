@@ -132,8 +132,8 @@ ecoQuestRouter.post("/save", async (req: AuthedRequest, res) => {
     const summary = await store.dailySummary(req.user!.id);
     const user = await store.findUser(req.user!.id);
     return res.status(result.updated ? 200 : 201).json({ ...responseFor(result.log, user, summary), updated: result.updated });
-  } catch (error: any) {
-    return res.status(400).json({ message: error.message ?? "Eco Quest save failed" });
+  } catch {
+    return res.status(400).json({ message: "Eco Quest save failed" });
   }
 });
 
@@ -149,8 +149,8 @@ ecoQuestRouter.post("/quick-log", async (req: AuthedRequest, res) => {
     const summary = await store.dailySummary(req.user!.id);
     const user = await store.findUser(req.user!.id);
     res.status(result.updated ? 200 : 201).json({ ...responseFor(result.log, user, summary), updated: result.updated });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Quick log failed" });
+  } catch {
+    res.status(400).json({ message: "Quick log failed" });
   }
 });
 
@@ -166,8 +166,8 @@ ecoQuestRouter.post("/detailed-log", async (req: AuthedRequest, res) => {
     const summary = await store.dailySummary(req.user!.id);
     const user = await store.findUser(req.user!.id);
     res.status(result.updated ? 200 : 201).json({ ...responseFor(result.log, user, summary), updated: result.updated });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Detailed log failed" });
+  } catch {
+    res.status(400).json({ message: "Detailed log failed" });
   }
 });
 

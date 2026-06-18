@@ -32,23 +32,23 @@ shopRouter.get("/equipped", async (req: AuthedRequest, res, next) => {
 shopRouter.post("/purchase/:itemId", async (req: AuthedRequest, res, next) => {
   try {
     res.json(await shopService.purchase(req.user!.id, String(req.params.itemId)));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not purchase item" });
+  } catch {
+    res.status(400).json({ message: "Could not purchase item" });
   }
 });
 
 shopRouter.post("/equip/:itemId", async (req: AuthedRequest, res, next) => {
   try {
     res.json(await shopService.equip(req.user!.id, String(req.params.itemId)));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not equip item" });
+  } catch {
+    res.status(400).json({ message: "Could not equip item" });
   }
 });
 
 shopRouter.post("/unequip/:itemId", async (req: AuthedRequest, res, next) => {
   try {
     res.json(await shopService.unequip(req.user!.id, String(req.params.itemId)));
-  } catch (error: any) {
-    res.status(400).json({ message: error.message ?? "Could not unequip item" });
+  } catch {
+    res.status(400).json({ message: "Could not unequip item" });
   }
 });

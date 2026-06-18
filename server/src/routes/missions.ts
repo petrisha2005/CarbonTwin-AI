@@ -10,6 +10,7 @@ import { requireAuth, type AuthedRequest } from "../middleware/auth.js";
 import { expectedProofForMission, validateMissionProof } from "../services/missionProofValidationService.js";
 import { missionService } from "../services/missionService.js";
 import { store } from "../services/store.js";
+import { sanitizeProofForResponse } from "../utils/proofSecurity.js";
 
 export const missionsRouter = express.Router();
 missionsRouter.use(requireAuth);
@@ -18,6 +19,7 @@ const proofDir = join(tmpdir(), "carbontwin-mission-proofs");
 mkdirSync(proofDir, { recursive: true });
 
 const allowedMimeTypes = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+const invalidProofFileTypeError = () => Object.assign(new Error("Upload rejected"), { code: "INVALID_PROOF_FILE_TYPE" });
 const upload = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, proofDir),
@@ -26,7 +28,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (allowedMimeTypes.has(file.mimetype)) cb(null, true);
-    else cb(new Error("Unsupported proof file type"));
+    else cb(invalidProofFileTypeError());
   }
 });
 
@@ -137,7 +139,7 @@ missionsRouter.post("/:missionId/upload-proof", (req: AuthedRequest, res, next) 
   upload.single("proof")(req, res, (error: any) => {
     if (!error) return next();
     if (error.code === "LIMIT_FILE_SIZE") return res.status(400).json({ success: false, code: "FILE_TOO_LARGE", message: "File size must be below 5MB." });
-    if (error.message === "Unsupported proof file type") return res.status(400).json({ success: false, code: "INVALID_FILE_TYPE", message: "Please upload a valid image or PDF proof." });
+    if (error.code === "INVALID_PROOF_FILE_TYPE") return res.status(400).json({ success: false, code: "INVALID_FILE_TYPE", message: "Please upload a valid image or PDF proof." });
     return next(error);
   });
 }, async (req: AuthedRequest, res, next) => {
@@ -180,14 +182,16 @@ missionsRouter.post("/:missionId/upload-proof", (req: AuthedRequest, res, next) 
       matchedFields: analysis.matchedEvidence ?? []
     };
     const result = await missionService.recordProof(req.user!.id, String(req.params.missionId), proof);
+    const responseProof = sanitizeProofForResponse(proof);
     const canClaimReward = canClaimRewardFor(analysis.verificationStatus);
     const responseData = {
       missionId: String(req.params.missionId),
       userMissionId: result.userMission.id,
       proof: {
-        fileName: proof.fileName,
-        proofMethod: proof.proofMethod,
-        uploadedAt: proof.uploadedAt
+        fileName: responseProof.fileName,
+        proofMethod: responseProof.proofMethod,
+        uploadedAt: responseProof.uploadedAt,
+        extractedTextPreview: responseProof.extractedTextPreview
       },
       verificationStatus: analysis.verificationStatus,
       trustScore: analysis.trustScore,
@@ -205,7 +209,7 @@ missionsRouter.post("/:missionId/upload-proof", (req: AuthedRequest, res, next) 
         message: "Proof does not match this mission.",
         data: responseData,
         ...result,
-        proof,
+        proof: responseProof,
         rewards: null,
         badges: [],
         user: await store.findUser(req.user!.id)
@@ -216,7 +220,7 @@ missionsRouter.post("/:missionId/upload-proof", (req: AuthedRequest, res, next) 
       data: responseData,
       message: analysis.validationMessage,
       ...result,
-      proof,
+      proof: responseProof,
       rewards: null,
       badges: [],
       user: await store.findUser(req.user!.id)

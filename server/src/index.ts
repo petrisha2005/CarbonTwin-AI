@@ -1,4 +1,4 @@
-import cors from "cors";
+import cors, { type CorsOptions } from "cors";
 import express from "express";
 import morgan from "morgan";
 import { connectDatabase } from "./config/db.js";
@@ -29,6 +29,13 @@ import { shopService } from "./services/shopService.js";
 const app = express();
 const developmentOrigins = env.nodeEnv === "production" ? [] : ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"];
 const allowedOrigins = new Set([env.clientOrigin, ...developmentOrigins]);
+const corsOptions: CorsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked origin: ${origin}`));
+  },
+  credentials: true
+};
 
 app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
@@ -38,15 +45,7 @@ app.use((_req, res, next) => {
   next();
 });
 
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) return callback(null, true);
-      return callback(new Error(`CORS blocked origin: ${origin}`));
-    },
-    credentials: true
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "1mb" }));
 if (env.nodeEnv !== "test") app.use(morgan("dev"));
 

@@ -106,6 +106,43 @@ npm run build --workspace server
 npm start --workspace server
 ```
 
+## Deployment
+
+Backend on Render:
+
+```text
+Root Directory: server
+Build Command: npm install --include=dev && npm run build
+Start Command: npm start
+```
+
+Render environment variables:
+
+```bash
+NODE_ENV=production
+PORT=10000
+CLIENT_URL=https://your-vercel-frontend-url.vercel.app
+MONGODB_URI=mongodb+srv://username:password@cluster.example.mongodb.net/carbontwin
+JWT_SECRET=replace-with-a-long-random-secret
+GEMINI_API_KEY=
+```
+
+The backend build uses TypeScript, so Render must install dev dependencies during the build step. The `--include=dev` flag ensures packages such as `@types/cors`, `@types/morgan`, `@types/jsonwebtoken`, and `@types/bcryptjs` are available before `npm run build`.
+
+Frontend on Vercel:
+
+```text
+Root Directory: client
+Build Command: npm run build
+Output Directory: dist
+```
+
+Vercel environment variable:
+
+```bash
+VITE_API_BASE_URL=https://your-render-backend-url.onrender.com/api
+```
+
 Useful local URLs:
 
 - Frontend: `http://127.0.0.1:5174`
